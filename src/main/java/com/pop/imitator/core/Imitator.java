@@ -15,6 +15,7 @@ public class Imitator {
 		SeqCreator sCreator = new SecondSeqCreator();
 		sCreator.init(eService);
 		sCreator.start();
+		eService.shutdown();
 
 	}
 

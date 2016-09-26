@@ -1,5 +1,9 @@
 package com.pop.imitator.core;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,7 +13,11 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.codec.Charsets;
+import org.apache.commons.io.FileUtils;
+
 import com.pop.imitator.hc.HcInstance;
+import com.pop.imitator.util.InitTools;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SecondSeqCreator implements SeqCreator {
 
 	private ExecutorService es;
-
+	private String targetUrl = InitTools.getInstance().getProps().getProperty("target_url");
 	@Override
 	public void start() {
 		List<String> seqs = readTimeList();
@@ -88,11 +96,35 @@ public class SecondSeqCreator implements SeqCreator {
 	}
 
 	private List<String> readTimeList() {
+		String timeSeqPath = InitTools.getInstance().getProps()
+				.getProperty("time_seq_file", "timeseq.txt");
+		File timeSeq = new File(timeSeqPath);
 		List<String> list = new ArrayList<String>();
-		list.add("20150101 18:20:50	50");
-		list.add("20150101 18:20:53	2");
-		list.add("20150101 18:20:58	300");
+		if (timeSeq.exists()) {//先按系统文件路径去找
+			try {
+				list = FileUtils.readLines(timeSeq, Charsets.UTF_8);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			URL fileName = this.getClass().getClassLoader().getResource(timeSeqPath);
+			if(fileName == null) {//再按类路径去找
+				log.error("找不到时间序列文件[{}]，请检查配置项[time_seq_file]是否正确，退出。",
+						timeSeqPath);
+			} else {
+				try {
+					list = FileUtils.readLines(new File(fileName.getFile()), Charsets.UTF_8);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		
 		return list;
+ 
 	}
 
 	private void laiNfa(int n) {
@@ -104,8 +136,8 @@ public class SecondSeqCreator implements SeqCreator {
 	}
 
 	private void laiyifa() {
-		String url = "http://www.baidu.com";
-		es.submit(new ReqTask(url));
+		
+		es.submit(new ReqTask(targetUrl));
 	}
 
 	@Override

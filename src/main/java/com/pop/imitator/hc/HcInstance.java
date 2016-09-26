@@ -6,7 +6,6 @@ import java.io.InputStream;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.config.SocketConfig;
@@ -20,6 +19,9 @@ public class HcInstance {
 	static {
 		init();
 	}
+	/**
+	 * 调用我来立即初始化httpclient
+	 */
 	public static void dummy() {}
 	public static void fetch(String url) throws UnsupportedOperationException, IOException {
         try {
@@ -61,12 +63,16 @@ public class HcInstance {
         } finally{}
 	}
 	
+	/**
+	 * 初始化httpclient
+	 */
 	private static void init() {
 		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         cm.setDefaultMaxPerRoute(5000);//如果只请求一个网站，则路由数是1
         cm.setMaxTotal(5000);
         SocketConfig socketConfig = SocketConfig.custom()
-                .setSoKeepAlive(false)
+                //.setSoKeepAlive(false)
+                .setSoTimeout(3000)
                 .build();
         cm.setDefaultSocketConfig(socketConfig);
        hc = HttpClients.custom()
