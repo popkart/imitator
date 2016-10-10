@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.pop.imitator.hc.HcInstance;
+import com.pop.imitator.util.StatisticUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,13 +38,14 @@ public class ReqTask implements Runnable {
 		try {
 			HcInstance.fetch(reqUrl);
 		} catch (Exception e) {
-			log.error("eeeeeeeeeeee");
+			StatisticUtil.add("fetch-err");
+			log.error("eeeeeeeeeeee",e);
 		} 
 		
 		
 		
 		Date stopDate = new Date();
-		log.info("start Time[{}], get url:{} spend[{}]ms", sdf.format(startDate), reqUrl, (stopDate.getTime() - startDate.getTime()));
+		log.debug("start Time[{}], get url:{} spend[{}]ms", sdf.format(startDate), reqUrl, (stopDate.getTime() - startDate.getTime()));
 		
 	}
 }

@@ -36,7 +36,7 @@ public class SecondSeqCreator implements SeqCreator {
 	public void start() {
 		List<String> seqs = readTimeList();
 		if (seqs.size() == 0) {
-			System.out.println("未读取到历史模拟序列，退出。");
+			log.warn("未读取到历史模拟序列，退出。");
 			return;
 		}
 

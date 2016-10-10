@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.io.IOUtils;
 
 
@@ -17,6 +19,7 @@ import org.apache.commons.io.IOUtils;
  * <li>JNDI（Catalina的实现）；
  * </ul>
  */
+@Slf4j
 public class InitTools {
 
 	/** 单例模式，唯一实例 */
@@ -42,7 +45,7 @@ public class InitTools {
 					props.load(is);
 					this.props = props;
 				}
-				System.out.println(props);
+				log.info("读取到配置文件内容为：{}", props);
 			} catch (IOException ex) {
 				throw new IllegalArgumentException("读取Properties配置文件时出错。");
 			} finally {
